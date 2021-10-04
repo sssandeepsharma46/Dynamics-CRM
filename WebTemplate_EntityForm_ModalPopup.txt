@@ -1,0 +1,68 @@
+{% extends "layout_1_column" %}
+{% block main %}
+<!--Load Entity Form-->
+<div class="main">
+    <div class="container">
+        <div class="form">
+            {% entityform id:page.adx_entityform.id %}
+        </div>
+    </div>
+</div>
+
+<script>
+var createApplicationURL = '{{settings['DNLB - Create Application Form']}}';
+var createApplicationButton = $("<input type='button' id='btnCreateApplication' value='Create Application' class='btn btn-primary' style='float:right; margin-right:15px;' />");
+$(".page-header").before(createApplicationButton);
+
+$("document").ready(function(){
+    $("#btnCreateApplication").on("click",function(){
+        createApplicationHandler();
+    });
+});
+
+function createApplicationHandler(){
+    loadCreateApplicationModal();
+    $("#createApplicationModal").css("display","block");
+    $("div.fade",parent.document).addClass("in");
+    $("div.fade.in",parent.document).addClass("modal-backdrop");
+}
+
+function loadCreateApplicationModal(){
+    var createAppURL = createApplicationURL;
+    var $modal = $("#createApplicationModal");
+    var $iFrame = $modal.find("iframe");
+    $iFrame.prop('src', createAppURL);
+
+    if($iFrame != undefined){
+        $iFrame.on("load",function(){
+            if($iFrame.contnets().find("#MessageLabel").length> 0 && $iFrame.contnets().find("#MessageLabel").text()=="Submission completed successfully."){
+                $modal.modal('hide');
+                window.location.href="/#";
+                return;
+            }
+        });        
+    }
+    $modal.modal();
+}
+
+</script>
+<section id="createApplicationModal" aria-hidden="true" aria-label="<span class='fa fa-info-circle' aria-hidden='true'></span> My Modal Title" class="modal fade modal-form modal-form-details" data-backdrop="static" role="dialog" tabindex="-1" style="display: none;">
+    <div class="modal-lg modal-dialog" style="width: 800px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button aria-label="Close" class="close" data-dismiss="modal" tabindex="0" title="Close" type="button">
+                    <span aria-hidden="true">×</span><span class="sr-only">Close</span>
+                </button>
+                <h1 class="modal-title h4" title="My Modal Title">Create New Application</h1>
+            </div>
+            <div class="modal-body">
+                <div class="form-loading" style="display: none;">
+                    <span class="fa fa-spinner fa-spin fa-4x" aria-hidden="true"></span>
+                </div>
+                <p>Sample Text</p>
+                <iframe id="createApplicationModal" src="" style="height: 320px;"></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

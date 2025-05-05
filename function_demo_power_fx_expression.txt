@@ -1,0 +1,16 @@
+If(
+    CaseId <> "",
+    Patch(
+        incident,
+        LookUp(incident, incidentid = GUID(CaseId)),
+        {
+            dnlb_isrefundeligible: If(DeliveryDelay > 5, incident_dnlb_incident_dnlb_isrefundeligible.'1',incident_dnlb_incident_dnlb_isrefundeligible.'0'),dnlb_refundamount:If(IssueCategory > 1,0.9*OrderedAmount,0.5*OrderedAmount),dnlb_approvaluserid:If(CustomerTier = 1,LookUp(systemuser,internalemailaddress = "sandysharma@SHISAKA003.onmicrosoft.com"),LookUp(systemuser,internalemailaddress = "SandeepSharma@SHISAKA003.onmicrosoft.com"))
+        }
+    )
+    
+);
+{
+    IsEligibleRefund: If((DeliveryDelay >= 5 || IssueCategory = 1 ),true, false),
+    ApprovalLevel :If(OrderedAmount > 10000.00 && IssueCategory =1,"Manager",If(OrderedAmount > 1000 && OrderedAmount <=10000 && IssueCategory =1,"Supervisor","Auto")),
+    RefundAmount:If(CustomerTier =1,0.9*OrderedAmount,If(CustomerTier =2,0.5*OrderedAmount,0.2*OrderedAmount))
+}
